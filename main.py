@@ -64,6 +64,10 @@ def sub_cb(topic, msg):
         updown = json.loads(msg)
     if topic.decode('utf-8') == 'dakkoeler/set_high_temp':
         HIGH_TEMP = float(msg.decode('utf-8'))
+    if topic.decode('utf-8') == 'dakkoeler/restart':
+        print("mqtt restart pico")
+        blinkN(5)
+        machine.reset()
 
 set_SMPS_PWM()
 led = Pin('LED', Pin.OUT)
@@ -99,7 +103,7 @@ repo_name = PROJECT
 branch = "main"
 firmware_url = f"https://github.com/mark-joe/{repo_name}/{branch}/"
 ota_updater = OTAUpdater(firmware_url,"main.py")
-ota_updater.check_for_updates()
+# ota_updater.check_for_updates()
 ota_updater.download_and_install_update_if_available()
 
 try:
@@ -124,6 +128,8 @@ client.set_callback(sub_cb)
 topic_sub = b'sun/updown'
 client.subscribe(topic_sub, qos=0)
 topic_sub = b'dakkoeler/set_high_temp'
+client.subscribe(topic_sub, qos=0)
+topic_sub = b'dakkoeler/restart'
 client.subscribe(topic_sub, qos=0)
 
 wdt = None
@@ -150,11 +156,13 @@ while True:  # loop takes about 2 seconds
         client.publish("%s/temperature"%PROJECT, "%.1f" % temp, retain=False, qos=0)
         client.publish("%s/high_temp"%PROJECT, "%.1f" % HIGH_TEMP, retain=False, qos=0)
         client.publish("%s/wlan_ssid"%PROJECT, wlan.config('ssid'), retain=False, qos=0)
+        client.publish("%s/wlan_rssi"%PROJECT, str(wlan.status('rssi')), retain=False, qos=0)
         client.publish("%s/wlan_ip"%PROJECT, str(wlan.ifconfig()[0]), retain=False, qos=0)
         client.publish("%s/whoami"%PROJECT, pico_id, retain=False, qos=0)
         (date,tme)=get_datetime()
         client.publish("%s/heartbeat"%PROJECT, date + " " + tme + ' (UTC)')
         client.publish("%s/water_switch"%PROJECT, str(onoff), retain=False, qos=0)
+        client.publish("%s/version"%PROJECT, str(VERSION), retain=False, qos=0)
         if updown != None: client.publish("%s/sunset"%PROJECT, updown['sunset'] + ' (UTC)', retain=False, qos=0)
 
         dic = collections.OrderedDict()
