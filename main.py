@@ -38,6 +38,7 @@ if DEBUG:
     use_WDT = False
 NTP_UPDATE_INTERVAL = 86400
 HIGH_TEMP = 40.0
+HYSTERESIS = 300
 
 def mqtt_connect(): 
     mqtt_server = secrets['mqtt_server']
@@ -122,6 +123,7 @@ for i in range(3):
     utime.sleep(.75)
     water_switch.off()
     utime.sleep(.75)
+start_time = 0
 
 updown = None
 client.set_callback(sub_cb)
@@ -161,7 +163,7 @@ while True:  # loop takes about 2 seconds
         client.publish("%s/whoami"%PROJECT, pico_id, retain=False, qos=0)
         (date,tme)=get_datetime()
         client.publish("%s/heartbeat"%PROJECT, date + " " + tme + ' (UTC)')
-        client.publish("%s/water_switch"%PROJECT, str(onoff), retain=False, qos=0)
+        client.publish("%s/water_switch"%PROJECT, "%d"%int(onoff), retain=False, qos=0)
         client.publish("%s/version"%PROJECT, str(VERSION), retain=False, qos=0)
         if updown != None: client.publish("%s/sunset"%PROJECT, updown['sunset'] + ' (UTC)', retain=False, qos=0)
 
@@ -213,9 +215,10 @@ while True:  # loop takes about 2 seconds
     if temp > HIGH_TEMP:
         if not onoff:
             water_switch.on()
+            start_time = unix_time
     else:
         if onoff:
-            water_switch.off()
+            if unix_time > start_time + HYSTERESIS: water_switch.off()
         
     if DEBUG:
         (date,tme)=get_datetime()
