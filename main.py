@@ -29,9 +29,8 @@ VERSION = version['version']
 f.close()
 
 DEBUG = False
-
 PROJECT = 'dakkoeler'
-keepalive = 600 # mqtt, publish is div 10
+keepalive = 60 # mqtt, publish is div 10
 use_WDT = True
 if DEBUG: 
     keepalive = 60
@@ -221,7 +220,7 @@ while True:  # loop takes about 2 seconds
             start_time = unix_time
     else:
         if onoff:
-            if temp < 36  or  unix_time > start_time + HYSTERESIS: water_switch.off()
+            if temp < LOW_TEMP  or  unix_time > start_time + HYSTERESIS: water_switch.off()
         
     if DEBUG:
         (date,tme)=get_datetime()
