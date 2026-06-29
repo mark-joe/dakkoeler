@@ -28,7 +28,7 @@ version = json.load(f)
 VERSION = version['version']
 f.close()
 
-DEBUG = True
+DEBUG = False
 
 PROJECT = 'dakkoeler'
 keepalive = 600 # mqtt, publish is div 10
@@ -37,8 +37,9 @@ if DEBUG:
     keepalive = 60
     use_WDT = False
 NTP_UPDATE_INTERVAL = 86400
-HIGH_TEMP = 40.0
-HYSTERESIS = 300
+HIGH_TEMP = 38.0
+LOW_TEMP = 36.0
+HYSTERESIS = 900 
 
 def mqtt_connect(): 
     mqtt_server = secrets['mqtt_server']
@@ -65,7 +66,7 @@ def sub_cb(topic, msg):
         updown = json.loads(msg)
     if topic.decode('utf-8') == 'dakkoeler/set_high_temp':
         HIGH_TEMP = float(msg.decode('utf-8'))
-    if topic.decode('utf-8') == 'dakkoeler/restart':
+    if topic.decode('utf-8') == 'dakkoeler/restart'  or  topic.decode('utf-8') == 'dakkoeler/reboot':
         print("mqtt restart pico")
         blinkN(5)
         machine.reset()
@@ -132,6 +133,8 @@ client.subscribe(topic_sub, qos=0)
 topic_sub = b'dakkoeler/set_high_temp'
 client.subscribe(topic_sub, qos=0)
 topic_sub = b'dakkoeler/restart'
+client.subscribe(topic_sub, qos=0)
+topic_sub = b'dakkoeler/reboot'
 client.subscribe(topic_sub, qos=0)
 
 wdt = None
@@ -218,7 +221,7 @@ while True:  # loop takes about 2 seconds
             start_time = unix_time
     else:
         if onoff:
-            if unix_time > start_time + HYSTERESIS: water_switch.off()
+            if temp < 36  or  unix_time > start_time + HYSTERESIS: water_switch.off()
         
     if DEBUG:
         (date,tme)=get_datetime()
