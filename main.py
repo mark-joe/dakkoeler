@@ -156,18 +156,19 @@ while True:  # loop takes about 2 seconds
     if diff_publish > (keepalive / 10):
         if DEBUG: print("time for a publish", diff_publish)
         last_publish = utime.time()
-        client.publish("%s/last_boot"%PROJECT, last_boot, retain=False, qos=0)
+#        client.publish("%s/last_boot"%PROJECT, last_boot, retain=False, qos=0)
         client.publish("%s/temperature"%PROJECT, "%.1f" % temp, retain=False, qos=0)
-        client.publish("%s/high_temp"%PROJECT, "%.1f" % HIGH_TEMP, retain=False, qos=0)
-        client.publish("%s/wlan_ssid"%PROJECT, wlan.config('ssid'), retain=False, qos=0)
-        client.publish("%s/wlan_rssi"%PROJECT, str(wlan.status('rssi')), retain=False, qos=0)
-        client.publish("%s/wlan_ip"%PROJECT, str(wlan.ifconfig()[0]), retain=False, qos=0)
-        client.publish("%s/whoami"%PROJECT, pico_id, retain=False, qos=0)
+#        client.publish("%s/high_temp"%PROJECT, "%.1f" % HIGH_TEMP, retain=False, qos=0)
+#        client.publish("%s/wlan_ssid"%PROJECT, wlan.config('ssid'), retain=False, qos=0)
+#        client.publish("%s/wlan_rssi"%PROJECT, str(wlan.status('rssi')), retain=False, qos=0)
+#        client.publish("%s/wlan_ip"%PROJECT, str(wlan.ifconfig()[0]), retain=False, qos=0)
+#        client.publish("%s/whoami"%PROJECT, pico_id, retain=False, qos=0)
         (date,tme)=get_datetime()
         client.publish("%s/heartbeat"%PROJECT, date + " " + tme + ' (UTC)')
         client.publish("%s/water_switch"%PROJECT, "%d"%int(onoff), retain=False, qos=0)
-        client.publish("%s/version"%PROJECT, str(VERSION), retain=False, qos=0)
-        if updown != None: client.publish("%s/sunset"%PROJECT, updown['sunset'] + ' (UTC)', retain=False, qos=0)
+#        client.publish("%s/version"%PROJECT, str(VERSION), retain=False, qos=0)
+#        client.publish("%s/DO_OTA"%PROJECT, "%d"%int(DO_OTA), retain=False, qos=0)
+#        if updown != None: client.publish("%s/sunset"%PROJECT, updown['sunset'] + ' (UTC)', retain=False, qos=0)
 
         dic = collections.OrderedDict()
         dic['last_boot']=last_boot
@@ -179,6 +180,7 @@ while True:  # loop takes about 2 seconds
         dic['version']=VERSION
         dic['heartbeat']=date + " " + tme + ' (UTC)'
         dic['water_switch']=onoff
+        dic['do_ota']=DO_OTA
         if updown != None: dic['sunset']=updown['sunset'] + ' (UTC)'
 
         s = json.dumps(dic)
