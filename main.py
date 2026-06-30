@@ -29,6 +29,7 @@ VERSION = version['version']
 f.close()
 
 DEBUG = False
+DO_OTA = False
 PROJECT = 'dakkoeler'
 keepalive = 60 # mqtt, publish is div 10
 use_WDT = True
@@ -80,7 +81,7 @@ p = Pin(4, Pin.IN, Pin.PULL_UP)
 ow = onewire.OneWire(p)
 ds = ds18x20.DS18X20(ow)
 roms = ds.scan()
-# if len(roms) == 0: PROJECT = PROJECT + '-test'
+if len(roms) == 0: PROJECT = PROJECT + '-test'
 
 bootlog = "boot.txt"
 fp = open(bootlog,"a")
@@ -105,7 +106,7 @@ branch = "main"
 firmware_url = f"https://github.com/mark-joe/{repo_name}/{branch}/"
 ota_updater = OTAUpdater(firmware_url,"main.py")
 # ota_updater.check_for_updates()
-ota_updater.download_and_install_update_if_available()
+if DO_OTA: ota_updater.download_and_install_update_if_available()
 
 try:
     client = mqtt_connect()
@@ -124,7 +125,8 @@ for i in range(3):
     water_switch.off()
     utime.sleep(.75)
 start_time = 0
-
+wdt = None # set wdt before the call back
+if use_WDT: wdt = WDT(timeout=5000)  # max 8388 millisecs
 updown = None
 client.set_callback(sub_cb)
 topic_sub = b'sun/updown'
@@ -136,8 +138,6 @@ client.subscribe(topic_sub, qos=0)
 topic_sub = b'dakkoeler/reboot'
 client.subscribe(topic_sub, qos=0)
 
-wdt = None
-if use_WDT: wdt = WDT(timeout=5000)  # max 8388 millisecs
 last_publish = utime.time()     # in seconds
 
 while True:  # loop takes about 2 seconds
