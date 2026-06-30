@@ -101,7 +101,7 @@ last_boot = date + " " + tme + ' (UTC)'
 blinkN(4,led)
 
 # Check for OTA updates
-repo_name = PROJECT
+repo_name = 'dakkoeler'
 branch = "main"
 firmware_url = f"https://github.com/mark-joe/{repo_name}/{branch}/"
 ota_updater = OTAUpdater(firmware_url,"main.py")
