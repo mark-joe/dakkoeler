@@ -29,7 +29,7 @@ VERSION = version['version']
 f.close()
 
 DEBUG = False
-DO_OTA = False
+DO_OTA = True
 PROJECT = 'dakkoeler'
 keepalive = 60 # mqtt, publish is div 10
 use_WDT = True
