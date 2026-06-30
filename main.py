@@ -104,8 +104,8 @@ blinkN(4,led)
 repo_name = 'dakkoeler'
 branch = "main"
 firmware_url = f"https://github.com/mark-joe/{repo_name}/{branch}/"
-ota_updater = OTAUpdater(firmware_url,"main.py")
-# ota_updater.check_for_updates()
+ota_updater = OTAUpdater(firmware_url,"main.py","ms_utils.py")
+ota_updater.check_for_updates()
 if DO_OTA: ota_updater.download_and_install_update_if_available()
 
 try:
