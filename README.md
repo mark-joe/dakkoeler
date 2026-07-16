@@ -1,4 +1,4 @@
-# dakkkoeler (aka roof cooler)
+# dakkoeler (aka roof cooler)
 This is not a general working solution for you. You can use it as inspiration. 
 This repository features as the source for over the air updates.
 
