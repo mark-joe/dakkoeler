@@ -8,3 +8,7 @@ Features ds18x20 as temperature probe, a Panasonic JW2SN-DC5V relay (via 470 Ohm
 
 select strongest WiFi, NTP time, over the air update (OTA), and MQTT to read and write data and instructions
 
+
+<center>
+<a><img src="20250211_191525.jpg" align="center" width="50%"></a>
+</center>
