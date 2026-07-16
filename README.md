@@ -10,5 +10,5 @@ select strongest WiFi, NTP time, over the air update (OTA), and MQTT to read and
 
 
 <center>
-<a><img src="20250211_191525.jpg" align="center" width="50%"></a>
+<a><img src="DSC06794.JPG" align="center" width="50%"></a>
 </center>
